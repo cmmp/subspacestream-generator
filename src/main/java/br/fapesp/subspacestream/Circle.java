@@ -14,8 +14,11 @@ public class Circle extends Shape {
 	
 	@Override
 	public Point getSidePoint() {
-		// TODO Auto-generated method stub
-		return null;
+		double angle = SubspaceStreamGenerator.RNG.nextUniform(0, 2 * Math.PI);
+		Point p = new Point();
+		p.x = center[0] + Math.cos(angle) * radius;
+		p.y = center[1] + Math.sin(angle) * radius;
+		return p;
 	}
 
 	@Override
@@ -26,12 +29,6 @@ public class Circle extends Shape {
 	@Override
 	public Point getInternalPoint() {
 		throw new RuntimeException("This is not a filled circle!");
-	}
-
-	@Override
-	public String getClassVal() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

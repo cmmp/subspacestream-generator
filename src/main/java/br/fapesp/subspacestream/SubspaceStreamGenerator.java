@@ -1,5 +1,7 @@
 package br.fapesp.subspacestream;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.BasicParser;
@@ -14,6 +16,7 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 import br.fapesp.myutils.MyUtils;
 
 /**
@@ -201,9 +204,19 @@ public class SubspaceStreamGenerator {
 			
 			this.dataset.add(inst);
 			
+			System.out.println("produced instance: " + inst);
+			
 		} // END MAIN POINT GENERATION LOOP
 		
-		// TODO save data set to disk:
+		ArffSaver saver = new ArffSaver();
+		saver.setInstances(this.dataset);
+		try {
+			saver.setFile(new File(this.outFileName));
+			saver.writeBatch();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		
 		if (verbose) {
 			MyUtils.printRep('-', 80);

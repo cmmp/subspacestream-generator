@@ -11,22 +11,22 @@ public abstract class Shape {
 	/**
 	 * min radius value
 	 */
-	private static final double MIN_R = 0.1;
+	private static final double MIN_R = 1; //0.05;
 	
 	/**
 	 * max radius value
 	 */
-	private static final double MAX_R = 0.3;
+	private static final double MAX_R = 5; //0.2;
 	
 	/**
 	 * min value for generating center
 	 */
-	private static final double MIN_V = 0.0;
+	private static final double MIN_V = 0; //0.0;
 	
 	/**
 	 * max value for generating center
 	 */
-	private static final double MAX_V = 1.0;
+	private static final double MAX_V = 100; //1.0;
 	
 	public double[] center;
 	
@@ -54,8 +54,6 @@ public abstract class Shape {
 				prefDims[i] = true;
 		this.radius = SubspaceStreamGenerator.RNG.nextUniform(MIN_R, MAX_R);
 	}
-	
-
 	
 	public boolean isFilled() {
 		return filled;
@@ -115,33 +113,69 @@ public abstract class Shape {
 	 */
 	public double[] getPoint(ArrayList<Shape> activeShapes, ArrayList<Shape> futureShapes) {
 		
-		boolean okPoint = true;
+		boolean notOkPoint = true;
 		double[] retP = new double[prefDims.length];
 		
-		while (okPoint) {
+		Point p = null;
+		
+		if (isFilled()) {
+			if (SubspaceStreamGenerator.coinflip()) {
+				// get an internal point
+				p = this.getInternalPoint();
+			}
+		}
+		
+		// get a side point
+		if (p == null)
+			p = this.getSidePoint();
+		
+		// check that p does not intersect with any other objects in other dimensions.
+		// we already know that shapes do not intersect, so we must only check the 
+		// noise dimensions against the preferred dimensions of other shapes.
+	
+		while (notOkPoint) {
+//			System.out.println("trying...");
+			int[] prefs = getPrefDims();
+			retP[prefs[0]] = p.x; retP[prefs[1]] = p.y;
 			
-			Point p = null;
+			for (int i = 0; i < prefDims.length; i++)
+				if (!prefDims[i])
+					retP[i] = SubspaceStreamGenerator.RNG.nextUniform(MIN_V, MAX_V);
 			
-			if (isFilled()) {
-				if (SubspaceStreamGenerator.coinflip()) {
-					// get an internal point
-					p = this.getInternalPoint();
+			notOkPoint = false;
+			
+			// check the active shapes list:
+			for (int i = 0; i < activeShapes.size(); i++) {
+				if (activeShapes.get(i) == this) continue;
+				prefs = activeShapes.get(i).getPrefDims();
+				double[] x1 = new double[] {retP[prefs[0]], retP[prefs[1]]};
+				if (SubspaceStreamGenerator.euclideanDistance(x1, activeShapes.get(i).center) <= activeShapes.get(i).getShapeRadius()) {
+//					System.out.println("x1: " + MyUtils.arrayToString(x1) + " center: " + MyUtils.arrayToString(activeShapes.get(i).center) + " dist: " + SubspaceStreamGenerator.euclideanDistance(x1,
+//							activeShapes.get(i).center) + " radius: " + activeShapes.get(i).getShapeRadius());
+					notOkPoint = true;
+					break;
 				}
 			}
 			
-			// get a side point
-			if (p == null)
-				p = this.getSidePoint();
+			if (notOkPoint) continue;
 			
-			// TODO check that p does not intersect with any other objects in other dimensions.
-			// we already know that shapes do not intersect, so we must only check the 
-			// noise dimensions against the preferred dimensions of other shapes.
-		
-			if (okPoint)
-				break;
+			// check the future shapes list:
+			for (int i = 0; i < futureShapes.size(); i++) {
+				if (futureShapes.get(i) == this) continue;
+				prefs = futureShapes.get(i).getPrefDims();
+				double[] x1 = new double[] { retP[prefs[0]], retP[prefs[1]] };
+				if (SubspaceStreamGenerator.euclideanDistance(x1,
+						futureShapes.get(i).center) <= futureShapes.get(i)
+						.getShapeRadius()) {
+//					System.out.println("x1: " + MyUtils.arrayToString(x1) + " center: " + MyUtils.arrayToString(futureShapes.get(i).center) + " dist: " + SubspaceStreamGenerator.euclideanDistance(x1,
+//							futureShapes.get(i).center) + " radius: " + futureShapes.get(i).getShapeRadius());
+					notOkPoint = true;
+					break;
+				}
+			}						
 		}
 		
-		return null;
+		return retP;
 	}
 
 	/**
@@ -155,6 +189,21 @@ public abstract class Shape {
 	protected abstract Point getSidePoint();
 	
 	protected abstract Point getInternalPoint();
+	
+	/**
+	 * get an array with two elements: the preferred
+	 * dimensions of this shape.
+	 * 
+	 * @return
+	 */
+	public int[] getPrefDims() {
+		int[] pref = new int[2];
+		int j = 0;
+		for (int i = 0; i < prefDims.length; i++)
+			if (prefDims[i])
+				pref[j++] = i;
+		return pref;
+	}
 
 	
 }

@@ -8,7 +8,12 @@ public class FilledCircle extends Circle {
 	
 	@Override
 	public Point getInternalPoint() {
-		throw new RuntimeException("Uninmplemented yet");
+		double r = SubspaceStreamGenerator.RNG.nextUniform(0, radius);
+		double angle = SubspaceStreamGenerator.RNG.nextUniform(0, 2 * Math.PI);
+		Point p = new Point();
+		p.x = center[0] + Math.cos(angle) * r;
+		p.y = center[1] + Math.sin(angle) * r;
+		return p;
 	}
 
 	

@@ -9,7 +9,17 @@ public class FilledSquare extends Square {
 	
 	@Override
 	public Point getInternalPoint() {
-		throw new RuntimeException("Uninmplemented yet");
+		Point p = new Point();
+		
+		double minX = center[0] - radius;
+		double maxX = center[0] + radius;
+		double minY = center[1] - radius;
+		double maxY = center[1] + radius;
+		
+		p.x = SubspaceStreamGenerator.RNG.nextUniform(minX, maxX);
+		p.y = SubspaceStreamGenerator.RNG.nextUniform(minY, maxY);
+		
+		return p;
 	}
 
 }
