@@ -1,6 +1,5 @@
 package br.fapesp.subspacestream;
 
-import javax.management.RuntimeErrorException;
 
 public class FilledSquare extends Square {
 

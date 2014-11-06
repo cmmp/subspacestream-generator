@@ -6,12 +6,14 @@ import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.random.RandomDataGenerator;
 
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instance;
+import weka.core.Instances;
 import br.fapesp.myutils.MyUtils;
 
 /**
@@ -35,6 +37,7 @@ public class SubspaceStreamGenerator {
 	private String outFileName;
 	public static RandomDataGenerator RNG = new RandomDataGenerator();
 	private int N;
+	private Instances dataset;
 	
 	public static double euclideanDistance(double[] p1, double[] p2) {
 		if (p1.length != p2.length)
@@ -69,10 +72,7 @@ public class SubspaceStreamGenerator {
 		options.addOption("o", true, "Output file (default: subspace_stream.arff)");
 		options.addOption("d", true, "Number of dimensions (default: 4)");
 		options.addOption("N", true, "Number of points (default: 10000)");
-		
-		Option optLambda = OptionBuilder.withArgName("arg").hasArg().withDescription("Lambda for weight function (default 0.1)").create("l");
-		optLambda.setRequired(false);
-		options.addOption(optLambda);
+		options.addOption("l", true, "Lambda for weight function (default 0.0006)");
 		
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
@@ -93,7 +93,7 @@ public class SubspaceStreamGenerator {
 		SubspaceStreamGenerator sub = new SubspaceStreamGenerator(
 				cmd.hasOption("v"), 
 				cmd.hasOption("a") ? Integer.parseInt(cmd.getOptionValue("a")) : 4, 
-				cmd.hasOption("l") ? Double.parseDouble(cmd.getOptionValue("l")) : 0.1,
+				cmd.hasOption("l") ? Double.parseDouble(cmd.getOptionValue("l")) : 0.0006,
 				cmd.hasOption("s") ? Long.parseLong(cmd.getOptionValue("s")) : 1234,		
 				cmd.hasOption("o") ? cmd.getOptionValue("o") : "subspace_stream.arff",
 				cmd.hasOption("d") ? Integer.parseInt(cmd.getOptionValue("d")) : 4,
@@ -102,7 +102,7 @@ public class SubspaceStreamGenerator {
 	}
 	
 	private double weightDecayFunction(double time) {
-		return Math.pow(2.0, - this.lambda * time);
+		return Math.pow(2.0, -this.lambda * time);
 	}
 
 	private void genDataSet() {
@@ -113,16 +113,97 @@ public class SubspaceStreamGenerator {
 			MyUtils.printRep('-', 80);
 		}
 		
-		// fill active and future shapes:
-		System.out.println("filling active shapes:");
-		MyUtils.printRep('-', 80);
-		fillShapes(activeShapes);
-		MyUtils.printRep('-', 80);
-		System.out.println("filling future shapes:");
-		MyUtils.printRep('-', 80);
-		fillShapes(futureShapes);
+		// create data set:
+		ArrayList<Attribute> atts = new ArrayList<Attribute>();
+		ArrayList<String> classValues = new ArrayList<String>();
 		
-		// generate points:
+		for (int i = 0; i < this.ndim; i++)
+			atts.add(new Attribute("X" + (i + 1)));
+		
+		classValues.add("Filled");
+		classValues.add("Empty");
+		Attribute clazz = new Attribute("class", classValues);
+		atts.add(clazz);
+		
+		this.dataset = new Instances("SubspaceTopologicalStream", atts, this.N);
+		this.dataset.setClass(clazz);
+		
+		if (verbose) {
+			System.out.println("filling active shapes:");
+			MyUtils.printRep('-', 80);
+		}
+		
+		fillShapes(activeShapes); // fill the active shapes list
+		
+		if (verbose) {
+			MyUtils.printRep('-', 80);
+			System.out.println("filling future shapes:");
+		}
+		
+		fillShapes(futureShapes); // fill the future shapes list
+		
+		if (verbose)
+			MyUtils.printRep('-', 80);
+		
+		ArrayList<Integer> actIds = new ArrayList<Integer>();
+		ArrayList<Integer> futureIds = new ArrayList<Integer>();
+		
+		for (int i = 0; i < this.nactive; i++) {actIds.add(i); futureIds.add(i);}
+		
+		// MAIN LOOP - generate points:
+		for (int i = 0; i < this.N; i++) {
+			time++;
+			
+			wActive = weightDecayFunction(time);
+			wFuture = 1.0 - wActive;
+			
+			if (wActive < 0.1) { 
+				// current active models are very outdated,
+				// exchange them for the future ones and replace
+				// the future ones for a new batch of models.
+				if (verbose) {
+					MyUtils.printRep('-', 80);
+					System.out.println("Making the switch of future models to a new batch at t = " + i + ":");
+				}
+				
+				activeShapes.clear();
+				activeShapes.addAll(futureShapes);
+								
+				fillShapes(futureShapes); // fill future shapes with a new batch
+				
+				if (verbose)
+					MyUtils.printRep('-', 80);
+				
+				time = 0;
+			}
+			
+			// generate the next point in the stream:
+			
+			double val = RNG.nextUniform(0, 1);
+			double[] p;
+			String classVal;
+			
+			if (wActive <= val) { // choose from active models
+				int id = (Integer) RNG.nextSample(actIds, 1)[0];
+				p = activeShapes.get(id).getPoint(activeShapes, futureShapes);
+				classVal = activeShapes.get(id).getClassVal();
+			} else { // choose from future models
+				int id = (Integer) RNG.nextSample(futureIds, 1)[0];
+				p = futureShapes.get(id).getPoint(activeShapes, futureShapes);
+				classVal = futureShapes.get(id).getClassVal();
+			}
+			
+			Instance inst = new DenseInstance(atts.size());
+			inst.setDataset(this.dataset);
+			for (int j = 0; j < this.ndim; j++)
+				inst.setValue(j, p[j]);
+			inst.setClassValue(classVal);
+			
+			this.dataset.add(inst);
+			
+		} // END MAIN POINT GENERATION LOOP
+		
+		// TODO save data set to disk:
 		
 		if (verbose) {
 			MyUtils.printRep('-', 80);
@@ -180,7 +261,7 @@ public class SubspaceStreamGenerator {
 		
 	}
 	
-	private boolean coinflip() {
+	public static boolean coinflip() {
 		return RNG.nextUniform(0, 1) >= 0.5 ? true : false;
 	}
 

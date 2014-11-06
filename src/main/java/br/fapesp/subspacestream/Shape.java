@@ -56,8 +56,6 @@ public abstract class Shape {
 	}
 	
 
-	public abstract Point getSidePoint();
-	public abstract Point getInternalPoint();
 	
 	public boolean isFilled() {
 		return filled;
@@ -104,5 +102,59 @@ public abstract class Shape {
 				intersection.add(i);
 		return intersection;
 	}
+
+	/**
+	 * method the main generator should use to get a point.
+	 * it should already check that the point does not 
+	 * intersect with other objects in other dimensions.
+	 * the point should already have the noise dimensions
+	 * added.
+	 * @param futureShapes 
+	 * @param activeShapes 
+	 * @return
+	 */
+	public double[] getPoint(ArrayList<Shape> activeShapes, ArrayList<Shape> futureShapes) {
+		
+		boolean okPoint = true;
+		double[] retP = new double[prefDims.length];
+		
+		while (okPoint) {
+			
+			Point p = null;
+			
+			if (isFilled()) {
+				if (SubspaceStreamGenerator.coinflip()) {
+					// get an internal point
+					p = this.getInternalPoint();
+				}
+			}
+			
+			// get a side point
+			if (p == null)
+				p = this.getSidePoint();
+			
+			// TODO check that p does not intersect with any other objects in other dimensions.
+			// we already know that shapes do not intersect, so we must only check the 
+			// noise dimensions against the preferred dimensions of other shapes.
+		
+			if (okPoint)
+				break;
+		}
+		
+		return null;
+	}
+
+	/**
+	 * get the class: empty or filled object
+	 * @return
+	 */
+	public String getClassVal() {
+		return isFilled() ? "Filled" : "Empty";
+	}
+	
+	protected abstract Point getSidePoint();
+	
+	protected abstract Point getInternalPoint();
+
 	
 }

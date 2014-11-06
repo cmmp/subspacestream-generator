@@ -1,5 +1,7 @@
 package br.fapesp.subspacestream;
 
+import java.util.ArrayList;
+
 public class Circle extends Shape {
 
 	public Circle(int ndim) {
@@ -24,6 +26,12 @@ public class Circle extends Shape {
 	@Override
 	public Point getInternalPoint() {
 		throw new RuntimeException("This is not a filled circle!");
+	}
+
+	@Override
+	public String getClassVal() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
