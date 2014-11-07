@@ -204,7 +204,7 @@ public class SubspaceStreamGenerator {
 			
 			this.dataset.add(inst);
 			
-			System.out.println("produced instance: " + inst);
+//			System.out.println("produced instance: " + inst);
 			
 		} // END MAIN POINT GENERATION LOOP
 		

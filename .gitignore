@@ -3,3 +3,8 @@
 .settings
 target/
 *.arff
+.RData
+.Rhistory
+*.dat
+*.sh
+plotsubspace.R
