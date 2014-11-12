@@ -11,12 +11,12 @@ public abstract class Shape {
 	/**
 	 * min radius value
 	 */
-	private static final double MIN_R = 1; //0.05;
+	private static final double MIN_R = 0.05; //0.05;
 	
 	/**
 	 * max radius value
 	 */
-	private static final double MAX_R = 5; //0.2;
+	private static final double MAX_R = 0.2; //0.2;
 	
 	/**
 	 * min value for generating center
@@ -26,7 +26,7 @@ public abstract class Shape {
 	/**
 	 * max value for generating center
 	 */
-	private static final double MAX_V = 100; //1.0;
+	private static final double MAX_V = 1; //1.0;
 	
 	public double[] center;
 	
