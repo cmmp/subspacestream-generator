@@ -9,24 +9,34 @@ import br.fapesp.myutils.MyUtils;
 public abstract class Shape {
 	
 	/**
+	 * extra separation besides radius
+	 */
+	private static final double EXTRA_SEP = 3;
+	
+	/**
+	 * max border value
+	 */
+	protected static final double MAX_B = 0.5;
+	
+	/**
 	 * min radius value
 	 */
-	private static final double MIN_R = 0.05; //0.05;
+	private static final double MIN_R = 1; //0.05;
 	
 	/**
 	 * max radius value
 	 */
-	private static final double MAX_R = 0.2; //0.2;
+	private static final double MAX_R = 5; //0.2;
 	
 	/**
 	 * min value for generating center
 	 */
-	private static final double MIN_V = 0; //0.0;
+	private static final double MIN_V = 1; //0.0;
 	
 	/**
 	 * max value for generating center
 	 */
-	private static final double MAX_V = 1; //1.0;
+	private static final double MAX_V = 100; //1.0;
 	
 	public double[] center;
 	
@@ -149,7 +159,7 @@ public abstract class Shape {
 				if (activeShapes.get(i) == this) continue;
 				prefs = activeShapes.get(i).getPrefDims();
 				double[] x1 = new double[] {retP[prefs[0]], retP[prefs[1]]};
-				if (SubspaceStreamGenerator.euclideanDistance(x1, activeShapes.get(i).center) <= activeShapes.get(i).getShapeRadius()) {
+				if (SubspaceStreamGenerator.euclideanDistance(x1, activeShapes.get(i).center) <= (activeShapes.get(i).getShapeRadius() + EXTRA_SEP)) {
 //					System.out.println("x1: " + MyUtils.arrayToString(x1) + " center: " + MyUtils.arrayToString(activeShapes.get(i).center) + " dist: " + SubspaceStreamGenerator.euclideanDistance(x1,
 //							activeShapes.get(i).center) + " radius: " + activeShapes.get(i).getShapeRadius());
 					notOkPoint = true;
@@ -165,8 +175,8 @@ public abstract class Shape {
 				prefs = futureShapes.get(i).getPrefDims();
 				double[] x1 = new double[] { retP[prefs[0]], retP[prefs[1]] };
 				if (SubspaceStreamGenerator.euclideanDistance(x1,
-						futureShapes.get(i).center) <= futureShapes.get(i)
-						.getShapeRadius()) {
+						futureShapes.get(i).center) <= (futureShapes.get(i)
+						.getShapeRadius() + EXTRA_SEP)) {
 //					System.out.println("x1: " + MyUtils.arrayToString(x1) + " center: " + MyUtils.arrayToString(futureShapes.get(i).center) + " dist: " + SubspaceStreamGenerator.euclideanDistance(x1,
 //							futureShapes.get(i).center) + " radius: " + futureShapes.get(i).getShapeRadius());
 					notOkPoint = true;

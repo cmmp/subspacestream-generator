@@ -21,27 +21,29 @@ public class Square extends Shape {
 		int side = SubspaceStreamGenerator.RNG.nextInt(1, 4);
 		double minX, maxX, minY, maxY;
 		
+		double border = SubspaceStreamGenerator.RNG.nextUniform(0, Shape.MAX_B);
+		
 		switch (side) {
 		case 1: // top
-			p.y = center[1] + radius;
+			p.y = center[1] + radius - border;
 			minX = center[0] - radius;
 			maxX = center[0] + radius;
 			p.x = SubspaceStreamGenerator.RNG.nextUniform(minX, maxX);
 			break;
 		case 2: // bottom
-			p.y = center[1] - radius;
+			p.y = center[1] - radius + border;
 			minX = center[0] - radius;
 			maxX = center[0] + radius;
 			p.x = SubspaceStreamGenerator.RNG.nextUniform(minX, maxX);
 			break;
 		case 3: // left
-			p.x = center[0] - radius;
+			p.x = center[0] - radius + border;
 			minY = center[1] - radius;
 			maxY = center[1] + radius;
 			p.y = SubspaceStreamGenerator.RNG.nextUniform(minY, maxY);
 			break;
 		case 4: // right
-			p.x = center[0] + radius;
+			p.x = center[0] + radius - border;
 			minY = center[1] - radius;
 			maxY = center[1] + radius;
 			p.y = SubspaceStreamGenerator.RNG.nextUniform(minY, maxY);

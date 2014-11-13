@@ -15,9 +15,11 @@ public class Circle extends Shape {
 	@Override
 	public Point getSidePoint() {
 		double angle = SubspaceStreamGenerator.RNG.nextUniform(0, 2 * Math.PI);
+		double border = SubspaceStreamGenerator.RNG.nextUniform(0, Shape.MAX_B);
+		
 		Point p = new Point();
-		p.x = center[0] + Math.cos(angle) * radius;
-		p.y = center[1] + Math.sin(angle) * radius;
+		p.x = center[0] + Math.cos(angle) * (radius - border);
+		p.y = center[1] + Math.sin(angle) * (radius - border);
 		return p;
 	}
 
