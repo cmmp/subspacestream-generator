@@ -17,6 +17,8 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Normalize;
 import br.fapesp.myutils.MyUtils;
 
 /**
@@ -207,6 +209,23 @@ public class SubspaceStreamGenerator {
 //			System.out.println("produced instance: " + inst);
 			
 		} // END MAIN POINT GENERATION LOOP
+		
+		// normalization:
+//		Normalize normalize = new Normalize();
+//		normalize.setScale(1.0);
+//		normalize.setTranslation(0.0);
+//		Instances normedData;
+//		
+//		try {
+//			normalize.setInputFormat(dataset);
+//			normedData = Filter.useFilter(dataset, normalize);
+//			ArffSaver saver = new ArffSaver();
+//			saver.setInstances(normedData);
+//			saver.setFile(new File(this.outFileName));
+//			saver.writeBatch();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}		
 		
 		ArffSaver saver = new ArffSaver();
 		saver.setInstances(this.dataset);
