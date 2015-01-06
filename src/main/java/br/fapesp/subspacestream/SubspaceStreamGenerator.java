@@ -188,11 +188,13 @@ public class SubspaceStreamGenerator {
 			double[] p;
 			String classVal;
 			
-			if (wActive <= val) { // choose from active models
+			if (val <= wActive) { // choose from active models
+//				System.out.println("choosing from active");
 				int id = (Integer) RNG.nextSample(actIds, 1)[0];
 				p = activeShapes.get(id).getPoint(activeShapes, futureShapes);
 				classVal = activeShapes.get(id).getClassVal();
 			} else { // choose from future models
+//				System.out.println("choosing from future");
 				int id = (Integer) RNG.nextSample(futureIds, 1)[0];
 				p = futureShapes.get(id).getPoint(activeShapes, futureShapes);
 				classVal = futureShapes.get(id).getClassVal();

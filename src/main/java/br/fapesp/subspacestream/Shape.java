@@ -16,17 +16,17 @@ public abstract class Shape {
 	/**
 	 * max border value
 	 */
-	protected static final double MAX_B = 0.5;
+	protected static final double MAX_B = 0.25;
 	
 	/**
 	 * min radius value
 	 */
-	private static final double MIN_R = 1; //0.05;
+	private static final double MIN_R = 2; //0.05;
 	
 	/**
 	 * max radius value
 	 */
-	private static final double MAX_R = 5; //0.2;
+	private static final double MAX_R = 2.01; //0.2;
 	
 	/**
 	 * min value for generating center
