@@ -3,6 +3,7 @@ package br.fapesp.subspacestream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -43,6 +44,16 @@ public class SubspaceStreamGenerator {
 	public static RandomDataGenerator RNG = new RandomDataGenerator();
 	private int N;
 	private Instances dataset;
+	
+	private static int uniqueCounter = 0;
+	private static HashMap<String, Integer> uniqueMap = new HashMap<String, Integer>();
+	
+	public String getClassMapping(String uuid) {
+		if (uniqueMap.containsKey(uuid))
+			return uniqueMap.get(uuid).toString();
+		uniqueMap.put(uuid, uniqueCounter++);
+		return String.valueOf(uniqueCounter - 1);
+	}
 	
 	public static double euclideanDistance(double[] p1, double[] p2) {
 		if (p1.length != p2.length)
@@ -125,13 +136,16 @@ public class SubspaceStreamGenerator {
 		for (int i = 0; i < this.ndim; i++)
 			atts.add(new Attribute("X" + (i + 1)));
 		
-		classValues.add("Filled");
-		classValues.add("Empty");
-		Attribute clazz = new Attribute("class", classValues);
+		//classValues.add("Filled");
+		//classValues.add("Empty");
+		for (int i = 0; i < nactive; i++)
+			classValues.add(String.valueOf(i));
+		
+		Attribute clazz = new Attribute("class", classValues); //new Attribute("class", classValues);
 		atts.add(clazz);
 		
 		this.dataset = new Instances("SubspaceTopologicalStream", atts, this.N);
-		this.dataset.setClass(clazz);
+		//this.dataset.setClass(clazz);
 		
 		if (verbose) {
 			System.out.println("filling active shapes:");
@@ -204,7 +218,9 @@ public class SubspaceStreamGenerator {
 			inst.setDataset(this.dataset);
 			for (int j = 0; j < this.ndim; j++)
 				inst.setValue(j, p[j]);
-			inst.setClassValue(classVal);
+			
+			inst.setValue(this.ndim, getClassMapping(classVal));
+			//inst.setClassValue(classVal);
 			
 			this.dataset.add(inst);
 			
@@ -229,6 +245,7 @@ public class SubspaceStreamGenerator {
 //			e.printStackTrace();
 //		}		
 		
+	
 		ArffSaver saver = new ArffSaver();
 		saver.setInstances(this.dataset);
 		try {

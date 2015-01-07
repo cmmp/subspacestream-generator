@@ -1,8 +1,7 @@
 package br.fapesp.subspacestream;
 
 import java.util.ArrayList;
-
-import javax.management.RuntimeErrorException;
+import java.util.UUID;
 
 import br.fapesp.myutils.MyUtils;
 
@@ -44,6 +43,8 @@ public abstract class Shape {
 	
 	public boolean[] prefDims;
 	
+	public UUID uniqueID;
+	
 	/**
 	 * radius for circles and half the length of the side for a square
 	 */
@@ -63,6 +64,7 @@ public abstract class Shape {
 			if (i == (Integer) sel[0] || i == (Integer) sel[1])
 				prefDims[i] = true;
 		this.radius = SubspaceStreamGenerator.RNG.nextUniform(MIN_R, MAX_R);
+		this.uniqueID = UUID.randomUUID();
 	}
 	
 	public boolean isFilled() {
@@ -193,7 +195,7 @@ public abstract class Shape {
 	 * @return
 	 */
 	public String getClassVal() {
-		return isFilled() ? "Filled" : "Empty";
+		return this.uniqueID.toString(); // isFilled() ? "Filled" : "Empty";
 	}
 	
 	protected abstract Point getSidePoint();
