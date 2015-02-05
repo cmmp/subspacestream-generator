@@ -35,7 +35,7 @@ public abstract class Shape {
 	/**
 	 * max value for generating center
 	 */
-	private static final double MAX_V = 100; //1.0;
+	private static final double MAX_V = 1000; //1.0;
 	
 	public double[] center;
 	

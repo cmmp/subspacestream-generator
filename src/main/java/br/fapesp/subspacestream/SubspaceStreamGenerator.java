@@ -138,7 +138,7 @@ public class SubspaceStreamGenerator {
 		
 		//classValues.add("Filled");
 		//classValues.add("Empty");
-		for (int i = 0; i < nactive * 3; i++)
+		for (int i = 0; i < nactive * 100; i++)
 			classValues.add(String.valueOf(i));
 		
 		Attribute clazz = new Attribute("class", classValues); //new Attribute("class", classValues);
