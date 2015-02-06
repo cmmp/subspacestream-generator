@@ -11,22 +11,22 @@ public abstract class Shape {
 	/**
 	 * extra separation besides radius
 	 */
-	private static final double EXTRA_SEP = 3;
+	private static final double EXTRA_SEP = 2;
 	
 	/**
 	 * max border value
 	 */
-	protected static final double MAX_B = 0.25;
+	protected static final double MAX_B = 0.5;
 	
 	/**
 	 * min radius value
 	 */
-	private static final double MIN_R = 2; //0.05;
+	private static final double MIN_R = 3; //0.05;
 	
 	/**
 	 * max radius value
 	 */
-	private static final double MAX_R = 2.01; //0.2;
+	private static final double MAX_R = 5; //0.2;
 	
 	/**
 	 * min value for generating center
@@ -71,10 +71,17 @@ public abstract class Shape {
 	
 	@Override
 	public String toString() {
+		StringBuffer sh = new StringBuffer("[");
+		int npref = 0;
+		for (int i = 0; i < prefDims.length; i++) if (prefDims[i]) sh.append(i + ",");
+		sh.deleteCharAt(sh.length() - 1);
+		sh.append("]");
+		
+		
 		return "Shape with center (" + 
 					String.format("%.3f", center[0]) + "," + 
 				  String.format("%.3f", center[1]) + ") and filled: " + filled + 
-				  " prefdims : " + MyUtils.arrayToString(prefDims) +
+				  " prefdims : " + sh.toString() +
 				  " radius: " + String.format("%.3f", radius); 
 	}
 	
