@@ -8,3 +8,4 @@ target/
 *.dat
 *.sh
 plotsubspace.R
+*.csv
