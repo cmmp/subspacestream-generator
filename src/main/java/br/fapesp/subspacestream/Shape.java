@@ -10,7 +10,7 @@ public abstract class Shape {
 	/**
 	 * extra separation besides radius
 	 */
-	private static final double EXTRA_SEP = 2;
+	private static final double EXTRA_SEP = 5;
 	
 	/**
 	 * max border value
@@ -35,7 +35,7 @@ public abstract class Shape {
 	/**
 	 * max value for generating center
 	 */
-	private static final double MAX_V = 100; //1.0;
+	private static final double MAX_V = 150; //1.0;
 	
 	public double[] center;
 	
