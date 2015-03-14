@@ -34,6 +34,12 @@
 			<artifactId>myutils</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.pentaho.pentaho-commons</groupId>
+			<artifactId>pentaho-package-manager</artifactId>
+			<version>1.0.8</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
