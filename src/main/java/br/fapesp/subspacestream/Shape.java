@@ -92,22 +92,27 @@ public abstract class Shape {
 		
 		// the maximum intersection is 2, as the objects always reside
 		// in a 2-d manifold, i.e., they always prefer only two dimensions.
-		if (intersectDims.size() > 2)
-			throw new RuntimeException("Got more than 2 intersecting dimensions!");
-				
-		// if they intersect in only one dimension, 
-		// then they will at most touch on a line, 
-		// but will be separated by the other dimension.
-		if (intersectDims.size() <= 1) 
-			return false;
-		
-		// if there are 2 intersecting dimensions, compute the euclidean distance
+//		if (intersectDims.size() > 2)
+//			throw new RuntimeException("Got more than 2 intersecting dimensions!");
+//		
+		// if there are  intersecting dimensions, compute the euclidean distance
 		// between their centers and check if it is greater than
 		// the sum of both shapes' radiuses.
-		if (SubspaceStreamGenerator.euclideanDistance(this.center, s.center) > (this.getShapeRadius() + s.getShapeRadius()))
-			return false;
 		
-		return true;
+//		if (intersectDims.size() == 0)
+//			return false;
+//		
+		// make sure that they are not on top of each other on any one of the dimensions
+		
+		for (int i = 0; i < intersectDims.size(); i++) {
+			if (Math.abs(this.center[i] - s.center[i]) < (this.getShapeRadius() + s.getShapeRadius() + Shape.EXTRA_SEP) )
+				return true;
+		}
+		
+//		if (SubspaceStreamGenerator.euclideanDistance(this.center, s.center) > (this.getShapeRadius() + s.getShapeRadius()))
+//			return false;
+		
+		return false;
 	}
 
 	private static ArrayList<Integer> getIntersectionDims(Shape s1, Shape s2) {
