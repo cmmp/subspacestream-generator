@@ -6,7 +6,6 @@ target/
 .RData
 .Rhistory
 *.dat
-*.sh
 plotsubspace.R
 *.csv
 *.mat
