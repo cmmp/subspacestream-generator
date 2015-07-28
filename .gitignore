@@ -9,3 +9,4 @@ target/
 plotsubspace.R
 *.csv
 *.mat
+*.7z
